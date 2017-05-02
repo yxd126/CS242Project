@@ -24,7 +24,7 @@ public class Server extends Thread  {
     private ObjectInputStream[] input;
     private ObjectOutputStream[] output;
     private Game game;
-    private FileWriter fstream;
+    private FileWriter fstream = null;
     private boolean replayMode;
 
 
@@ -34,7 +34,6 @@ public class Server extends Thread  {
         output = new ObjectOutputStream[NUM_PLAYER];
         input = new ObjectInputStream[NUM_PLAYER];
         this.replayMode = replayMode;
-        fstream = new FileWriter("log.txt");
 
         System.out.println("Server is set up");
         if(!replayMode) {
@@ -155,6 +154,15 @@ public class Server extends Thread  {
 
     }
 
+    public void broadcastEnd() throws IOException {
+
+        for(int i = 0; i <  NUM_PLAYER; i++){
+            output[i].reset();
+            output[i].writeObject("END");
+        }
+
+    }
+
     @Override
     public void run() {
 
@@ -162,6 +170,9 @@ public class Server extends Thread  {
         //while(true){
             try {
                 if(!replayMode) {
+                    File file = new File("log.txt");
+                    file.createNewFile();
+                    fstream = new FileWriter(file);
                     gameInit();
                 }
                 else{
@@ -200,13 +211,15 @@ public class Server extends Thread  {
                         String request = (String) input[currentPlayer].readObject();
                         if (request.startsWith("EXIT")) {
                             //let other player continue playing until only one left
+                            broadcastEnd();
                             gameExit();
                             break;
                         }
 
                         //a player meets the game winning requirement
                         if (request.startsWith("VICTORY")) {
-                            lastRound(currentPlayer);
+                            //lastRound(currentPlayer);
+                            broadcastEnd();
                             gameExit();
                             break;
                         }
@@ -257,6 +270,7 @@ public class Server extends Thread  {
                             String command = (String) input[currentPlayer].readObject();
                             fstream.write("COLLECT\n");
                             fstream.write(command+"\n");
+                            fstream.flush();
                             currentPlayer = collectOperation(currentPlayer, command, false);
                         }
 
@@ -265,6 +279,7 @@ public class Server extends Thread  {
                             String command = (String) input[currentPlayer].readObject();
                             fstream.write("PURCHASE\n");
                             fstream.write(command+"\n");
+                            fstream.flush();
                             currentPlayer = purchaseOperation(currentPlayer, command, false);
                         }
 
@@ -273,6 +288,7 @@ public class Server extends Thread  {
                             String command = (String) input[currentPlayer].readObject();
                             fstream.write("RESERVE\n");
                             fstream.write(command+"\n");
+                            fstream.flush();
                             currentPlayer = reserveOperation(currentPlayer, command, false);
                         }
 

@@ -5,12 +5,15 @@ import Game.Game;
 import Model.*;
 import View.*;
 
+import javax.swing.*;
 import java.lang.management.ManagementFactory;
 import java.lang.reflect.Array;
 import java.net.*;
 import java.io.*;
 import java.util.ArrayList;
 import java.util.Scanner;
+
+import static Model.utils.GameUtils.WINNING_SCORE;
 
 /**
  * Created by boyinzhang on 4/22/17.
@@ -83,6 +86,11 @@ public class Client {
                         System.out.println("You win :)");
                         break;
                     }
+                    else if(response.startsWith("END")){
+                        JOptionPane.showMessageDialog(null, "Game end! You can restart a new game",
+                                "Warning", JOptionPane.WARNING_MESSAGE);
+                        break;
+                    }
                     else if(response.startsWith ("TIE")){
                         ArrayList<Integer> playerList = (ArrayList<Integer>) flowInput.readObject();
                         playerList.remove(new Integer(clientID));
@@ -128,7 +136,13 @@ public class Client {
                             String command = controller.game.getCurrentPlayer().whichOperation(controller.game);
                             String[] splitedCommand = command.split(" ", 2);
                             controller.requestServer(splitedCommand[0], splitedCommand[1]);
+                            if(controller.game.getPlayers()[clientID].getScore()>= WINNING_SCORE){
+                                controller.sendVoteResult("VICTORY!");
+                            }
                         }
+                    }
+                    else if(response.startsWith("END")){
+                        break;
                     }
                     else if(response.startsWith("VOTE")){
                         controller.sendVoteResult("AGREE");

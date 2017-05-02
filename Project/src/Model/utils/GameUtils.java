@@ -4,7 +4,7 @@ package Model.utils;
  * Created by boyinzhang on 4/9/17.
  */
 public class GameUtils {
-    public final static int NUM_PLAYER = 2;
+    public final static int NUM_PLAYER = 4;
     public final static int NUM_CARD_RANK = 3;
     public final static int NUM_CARD_PER_RANK = 4;
     public final static int INIT_AMOUNT_PER_GEM = 7;

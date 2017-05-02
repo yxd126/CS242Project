@@ -92,7 +92,7 @@ public class Controller{
     private void addExitListener() {
         boardUI.addExitListener(new ActionListener(){
             public void actionPerformed(ActionEvent event) {
-                requestServer("EXIT");
+                sendVoteResult("EXIT");
                 System.exit(0);
             }
         });
@@ -286,7 +286,7 @@ public class Controller{
                     if (checkEnd()) {
 
                         game.turnToNextPlayer();
-                        requestServer("VICTORY");
+                        sendVoteResult("VICTORY");
                         return;
                     }
                     game.turnToNextPlayer();
@@ -394,7 +394,7 @@ public class Controller{
      * Send text information and the game to server
      * @param msg text indicator
      */
-    private void requestServer(String msg){
+    public void requestServer(String msg){
         try {
             out.reset();
             out.writeObject(msg);
