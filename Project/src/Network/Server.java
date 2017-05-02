@@ -34,6 +34,7 @@ public class Server extends Thread  {
         output = new ObjectOutputStream[NUM_PLAYER];
         input = new ObjectInputStream[NUM_PLAYER];
         this.replayMode = replayMode;
+        fstream = new FileWriter("log.txt");
 
         System.out.println("Server is set up");
         if(!replayMode) {
